@@ -9,13 +9,17 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <modules>
-        <module>user service</module>
+        <module>user-service</module>
+        <module>booking-service</module>
+        <module>feign-clients</module>
+        <module>eureka-server</module>
     </modules>
 
     <properties>
         <java.version>17</java.version>
         <spring.boot.maven.plugin.version>3.2.4</spring.boot.maven.plugin.version>
         <spring.boot.dependencies.version>3.2.4</spring.boot.dependencies.version>
+        <spring-cloud.version>2023.0.0</spring-cloud.version>
     </properties>
 
     <dependencyManagement>
@@ -27,11 +31,20 @@
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
+
             <dependency>
-                <groupId>org.springframework.data</groupId>
-                <artifactId>spring-data-bom</artifactId>
-                <version>2023.1.4</version>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
+
+<!--            <dependency>-->
+<!--                <groupId>org.springframework.data</groupId>-->
+<!--                <artifactId>spring-data-bom</artifactId>-->
+<!--                <version>2023.1.4</version>-->
+<!--            </dependency>-->
         </dependencies>
     </dependencyManagement>
 
@@ -64,6 +77,13 @@
             <artifactId>spring-boot-docker-compose</artifactId>
             <optional>true</optional>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+            <version>4.1.1</version>
+        </dependency>
+
     </dependencies>
 
 </project>
