@@ -17,7 +17,7 @@ services:
     container_name: sportscape-pgadmin
     image: dpage/pgadmin4
     environment:
-      PGADMIN_DEFAULT_EMAIL: "admin"
+      PGADMIN_DEFAULT_EMAIL: "admin@email.com"
       PGADMIN_DEFAULT_PASSWORD: "admin"
       PGADMIN_CONFIG_SERVER_MODE: 'False'
     volumes:

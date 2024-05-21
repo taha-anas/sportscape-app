@@ -4,14 +4,13 @@ server:
 spring:
   application:
     name: user-service
-#  docker:
-#    compose:
-#      enabled : true
+
   datasource:
     url: jdbc:postgresql://localhost:5432/sportscape
     username: admin
     password: admin
     driver-class-name: org.postgresql.Driver
+
   jpa:
     hibernate:
       ddl-auto: create-drop
