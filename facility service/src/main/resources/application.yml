@@ -1,9 +1,9 @@
 server:
-  port: 8087
+  port: 8088
 
 spring:
   application:
-    name: booking-service
+    name: facility-service
   #  docker:
   #    compose:
   #      enabled : true
@@ -12,7 +12,6 @@ spring:
     username: admin
     password: admin
     driver-class-name: org.postgresql.Driver
-
   jpa:
     hibernate:
       ddl-auto: create-drop
@@ -21,8 +20,6 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
     show-sql: false
-
-
 eureka:
   client:
     service-url:
