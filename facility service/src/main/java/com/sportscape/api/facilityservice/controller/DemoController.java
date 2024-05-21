@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/facility/")
 public class DemoController {
 
     @Autowired
@@ -24,6 +24,12 @@ public class DemoController {
 
     @Autowired
     private SportTypeService sportTypeService;
+
+    @GetMapping("/TestGateWay")
+    public String TestGateWay() {
+        return "Hi You receved this from facility service! ";
+    }
+
 
     // Location Endpoints
     @GetMapping("/locations")
