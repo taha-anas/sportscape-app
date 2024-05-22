@@ -12,7 +12,7 @@
         <module>user-service</module>
         <module>booking-service</module>
         <module>feign-clients</module>
-        <module>facility service</module>
+        <module>facility-service</module>
         <module>eureka-server</module>
         <module>apigw</module>
     </modules>
@@ -23,6 +23,8 @@
         <spring.boot.dependencies.version>3.2.4</spring.boot.dependencies.version>
         <spring-cloud.version>2023.0.0</spring-cloud.version>
         <spring.boot.maven.plugin.version>3.8.0</spring.boot.maven.plugin.version>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
     </properties>
 
     <dependencyManagement>
