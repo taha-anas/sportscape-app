@@ -10,6 +10,7 @@ import com.sportscape.api.paymentservice.model.Status;
 import com.sportscape.api.paymentservice.service.BookingService;
 import com.sportscape.api.paymentservice.service.InvoiceService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,25 +23,27 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("api/booking")
+@Slf4j
 public class BookingController {
     @Autowired
     private BookingService bookingService;
     @Autowired
     private InvoiceService invoiceService;
-//    @Autowired
-//    private UserClient userClient;
+    @Autowired
+    private UserClient userClient;
 
     @GetMapping
     public ResponseEntity<?> getAllUserBooking(@RequestBody BookingRequestDto bookingDto) {
+        log.info("Get all user booking request body {}", bookingDto);
         if (bookingDto.getUserId() == null ) {
             return new ResponseEntity<>("User id must present in the request body", HttpStatus.BAD_REQUEST);
         }
         // to-do check if user id refer to user
         // send request to user service
-//        UserResponse user = userClient.getUser(bookingDto.getUserId());
-//        if (user == null) {
-//            return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
-//        }
+        UserResponse user = userClient.getUser(bookingDto.getUserId());
+        if (user == null) {
+            return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+        }
         // if okay return all booking
         List<Booking> bookings = bookingService.getBookingsByUserId(bookingDto.getUserId());
         return new ResponseEntity<>(

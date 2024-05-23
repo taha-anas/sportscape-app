@@ -8,7 +8,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableFeignClients(
-        basePackages = "com.sportscape.api"
+        basePackages = "com.sportscape.api.clients"
 )
 public class BookingServiceApplication {
     public static void main(String[] args) {

@@ -4,13 +4,7 @@ server:
 spring:
   application:
     name: api-gateway
-#  cloud:
-#    gateway:
-#      routes:
-#        - id: user-service
-#          uri: lb://USER-SERVICE
-#          predicates:
-#            - Path = /api/users/**
+
   cloud:
     gateway:
       routes:

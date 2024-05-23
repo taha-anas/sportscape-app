@@ -2,8 +2,11 @@ package com.sportscape.api.userservice;
 
 import com.sportscape.api.userservice.dto.RegisterRequest;
 import com.sportscape.api.userservice.enums.Role;
-import com.sportscape.api.userservice.service.AuthService;
+//import com.sportscape.api.userservice.service.AuthService;
+import com.sportscape.api.userservice.model.User;
+import com.sportscape.api.userservice.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -18,33 +21,39 @@ import org.springframework.context.annotation.Bean;
         basePackages = "com.sportscape.api.clients.user"
 )
 public class UserServiceApplication {
+    @Autowired
+    private UserService userService;
 
     public static void main(String[] args) {
         SpringApplication.run(UserServiceApplication.class, args);
     }
 
     @Bean
-    public CommandLineRunner commandLineRunner(AuthService authService) {
+    public CommandLineRunner commandLineRunner() {
         return args ->  {
-            RegisterRequest admin = RegisterRequest.builder()
+            User admin = User.builder()
                     .firstname("admin")
                     .lastname("admin")
                     .email("admin@api.com")
                     .password("admin")
                     .role(Role.ADMIN)
                     .build();
-            String adminToken = authService.register(admin).getToken();
+//            String adminToken = authService.register(admin).getToken();
 
-            RegisterRequest owner = RegisterRequest.builder()
+            User owner = User.builder()
                     .firstname("owner")
                     .lastname("owner")
                     .email("owner@api.com")
                     .password("owner")
                     .role(Role.OWNER)
                     .build();
-            String ownerToken = authService.register(owner).getToken();
-            log.info("Admin token: {}", adminToken);
-            log.info("Owner token: {}", ownerToken);
+
+            // saving users :
+            userService.saveUser(admin);
+            userService.saveUser(owner);
+
+            log.info("Admin user: {}", admin);
+            log.info("Owner user: {}", owner);
         };
 
     }

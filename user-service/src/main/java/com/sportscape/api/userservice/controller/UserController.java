@@ -3,7 +3,7 @@ package com.sportscape.api.userservice.controller;
 import com.sportscape.api.userservice.dto.UserRequest;
 import com.sportscape.api.userservice.dto.UserResponse;
 import com.sportscape.api.userservice.model.User;
-import com.sportscape.api.userservice.service.AuthService;
+//import com.sportscape.api.userservice.service.AuthService;
 import com.sportscape.api.userservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,8 +22,8 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private AuthService authService;
+//    @Autowired
+//    private AuthService authService;
 
     @GetMapping
     public ResponseEntity<List<UserResponse>> getUsers() {
@@ -42,16 +42,17 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponse> getUser(@PathVariable long id) {
+    public ResponseEntity<UserResponse> getUser(@PathVariable("id") long id) {
+        System.out.println("pass");
         Optional<User> user = userService.getUserById(id);
         return user
                 .map(value -> new ResponseEntity<>(mapToUserResponse(value), HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @PutMapping("{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<UserResponse> updateUser(
-            @PathVariable Long id,
+            @PathVariable("id") Long id,
             @RequestBody UserRequest userRequest ){
         if (!userService.userExistsById(id)){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -62,8 +63,8 @@ public class UserController {
         return new ResponseEntity<>(mapToUserResponse(newUser), HttpStatus.OK);
     }
 
-    @DeleteMapping("{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable long id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable("id") long id) {
         if (!userService.userExistsById(id)){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -94,23 +95,23 @@ public class UserController {
                 .role(userRequest.getRole())
                 .build();
     }
-    @GetMapping("/CurrentUserInfo")
-    public ResponseEntity<UserResponse> getCurrentUserInfo() {
-        User user = authService.getCurrentUser();
-        if (user != null) {
-            UserResponse userResponse = UserResponse.builder()
-                    .id(user.getId())
-                    .firstname(user.getFirstname())
-                    .lastname(user.getLastname())
-                    .email(user.getEmail())
-                    .phone(user.getPhone())
-                    .address(user.getAddress())
-                    .role(user.getRole())
-                    .build();
-            return ResponseEntity.ok(userResponse);
-        } else {
-            return ResponseEntity.status(401).build();
-        }
-    }
-    }
+//    @GetMapping("/CurrentUserInfo")
+//    public ResponseEntity<UserResponse> getCurrentUserInfo() {
+//        User user = authService.getCurrentUser();
+//        if (user != null) {
+//            UserResponse userResponse = UserResponse.builder()
+//                    .id(user.getId())
+//                    .firstname(user.getFirstname())
+//                    .lastname(user.getLastname())
+//                    .email(user.getEmail())
+//                    .phone(user.getPhone())
+//                    .address(user.getAddress())
+//                    .role(user.getRole())
+//                    .build();
+//            return ResponseEntity.ok(userResponse);
+//        } else {
+//            return ResponseEntity.status(401).build();
+//        }
+//    }
+}
 
