@@ -3,11 +3,14 @@ package com.sportscape.api.userservice.controller;
 import com.sportscape.api.userservice.dto.UserRequest;
 import com.sportscape.api.userservice.dto.UserResponse;
 import com.sportscape.api.userservice.model.User;
+import com.sportscape.api.userservice.service.AuthService;
 import com.sportscape.api.userservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.*;
+import java.util.stream.Collectors;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,11 +22,17 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private AuthService authService;
+
     @GetMapping
     public ResponseEntity<List<UserResponse>> getUsers() {
+
         List<User> users = userService.getAllUsers();
-        return ResponseEntity.ok(users.stream().map(this::mapToUserResponse).toList());
+        return ResponseEntity.ok(users.stream().map(this::mapToUserResponse).collect(Collectors.toList()));
+
     }
+    
 
     @PostMapping
     public ResponseEntity<UserResponse> createUser(@RequestBody UserRequest userRequest) {
@@ -85,4 +94,23 @@ public class UserController {
                 .role(userRequest.getRole())
                 .build();
     }
-}
+    @GetMapping("/CurrentUserInfo")
+    public ResponseEntity<UserResponse> getCurrentUserInfo() {
+        User user = authService.getCurrentUser();
+        if (user != null) {
+            UserResponse userResponse = UserResponse.builder()
+                    .id(user.getId())
+                    .firstname(user.getFirstname())
+                    .lastname(user.getLastname())
+                    .email(user.getEmail())
+                    .phone(user.getPhone())
+                    .address(user.getAddress())
+                    .role(user.getRole())
+                    .build();
+            return ResponseEntity.ok(userResponse);
+        } else {
+            return ResponseEntity.status(401).build();
+        }
+    }
+    }
+

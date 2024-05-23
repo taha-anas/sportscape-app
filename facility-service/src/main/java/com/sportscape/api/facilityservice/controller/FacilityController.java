@@ -1,5 +1,7 @@
 package com.sportscape.api.facilityservice.controller;
 
+import com.sportscape.api.clients.user.UserClient;
+import com.sportscape.api.clients.user.UserResponse;
 import com.sportscape.api.facilityservice.dto.SportsFacilityDto;
 import com.sportscape.api.facilityservice.model.Location;
 import com.sportscape.api.facilityservice.model.SportType;
@@ -11,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.sportscape.api.clients.user.Role;
 
 import java.time.LocalTime;
 import java.util.List;
@@ -29,6 +32,9 @@ public class FacilityController {
 
     @Autowired
     private SportTypeService sportTypeService;
+
+    @Autowired
+    private UserClient userClient;
 
     // Test endpoint
     @GetMapping("/TestGateWay")
@@ -103,26 +109,36 @@ public class FacilityController {
 
     @PostMapping("/sports-facilities")
     public ResponseEntity<?> createSportsFacility(@RequestBody SportsFacilityDto sportsFacilityDto) {
-        if (sportsFacilityDto == null) {
-            return ResponseEntity.badRequest().body("Sports Facility request body cannot be null");
+        ResponseEntity<UserResponse> userResponseEntity = userClient.getCurrentUserInfo();
+
+        // if you successfully get userInfo
+        if (userResponseEntity.getStatusCode().is2xxSuccessful()) {
+            UserResponse userResponse = userResponseEntity.getBody();
+            if (userResponse != null && userResponse.getRole() == Role.OWNER) {
+                // if he is owner he can add facility
+                SportsFacility sportsFacility = SportsFacility.builder()
+                        .name(sportsFacilityDto.getName())
+                        .address(sportsFacilityDto.getAddress())
+                        .amenities(sportsFacilityDto.getAmenities())
+                        .openingHour(LocalTime.parse(sportsFacilityDto.getOpeningHour()))
+                        .closingHour(LocalTime.parse(sportsFacilityDto.getClosingHour()))
+                        .reservationPrice(sportsFacilityDto.getReservationPrice())
+                        .ownerId(userResponse.getId()) // from the current user which he is owner
+                        .build();
+
+
+                SportsFacility savedSportsFacility = sportsFacilityService.saveSportsFacility(sportsFacility);
+
+                // Return ResponseEntity with the saved sports facility object in the body
+                return ResponseEntity.ok(savedSportsFacility);
+            } else {
+                // User does not have the OWNER role ERROR!
+                return ResponseEntity.status(401).body("User does not have the required role to add a sports facility");
+            }
+        } else {
+            // Error occurred while fetching user info
+            return ResponseEntity.status(userResponseEntity.getStatusCodeValue()).build();
         }
-        //todo cheking if the user performing the add facility op has already role OWNER
-        //todo if yes assign the value of the authenticated user identifier to the attribute owner_id
-        // Build SportsFacility object using builder
-        SportsFacility sportsFacility = SportsFacility.builder()
-                .name(sportsFacilityDto.getName())
-                .address(sportsFacilityDto.getAddress())
-                .amenities(sportsFacilityDto.getAmenities())
-                .openingHour(LocalTime.parse(sportsFacilityDto.getOpeningHour()))
-                .closingHour(LocalTime.parse(sportsFacilityDto.getClosingHour()))
-                .reservationPrice(sportsFacilityDto.getReservationPrice())
-                .ownerId(1L)
-                .build();
-
-
-        SportsFacility savedSportsFacility = sportsFacilityService.saveSportsFacility(sportsFacility);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedSportsFacility);
     }
 
     @DeleteMapping("/sports-facilities/{id}")
