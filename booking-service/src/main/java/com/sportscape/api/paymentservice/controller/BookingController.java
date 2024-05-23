@@ -1,5 +1,7 @@
 package com.sportscape.api.paymentservice.controller;
 
+import com.sportscape.api.clients.user.UserClient;
+import com.sportscape.api.clients.user.UserResponse;
 import com.sportscape.api.paymentservice.dto.BookingRequestDto;
 import com.sportscape.api.paymentservice.dto.BookingResponseDto;
 import com.sportscape.api.paymentservice.model.Booking;
@@ -7,6 +9,7 @@ import com.sportscape.api.paymentservice.model.Invoice;
 import com.sportscape.api.paymentservice.model.Status;
 import com.sportscape.api.paymentservice.service.BookingService;
 import com.sportscape.api.paymentservice.service.InvoiceService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,11 +23,12 @@ import java.util.UUID;
 @RestController
 @RequestMapping("api/booking")
 public class BookingController {
-
     @Autowired
     private BookingService bookingService;
     @Autowired
     private InvoiceService invoiceService;
+//    @Autowired
+//    private UserClient userClient;
 
     @GetMapping
     public ResponseEntity<?> getAllUserBooking(@RequestBody BookingRequestDto bookingDto) {
@@ -33,7 +37,10 @@ public class BookingController {
         }
         // to-do check if user id refer to user
         // send request to user service
-
+//        UserResponse user = userClient.getUser(bookingDto.getUserId());
+//        if (user == null) {
+//            return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+//        }
         // if okay return all booking
         List<Booking> bookings = bookingService.getBookingsByUserId(bookingDto.getUserId());
         return new ResponseEntity<>(
