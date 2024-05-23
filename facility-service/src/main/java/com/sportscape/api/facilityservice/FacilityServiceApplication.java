@@ -11,11 +11,17 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 
+import java.time.LocalTime;
 import java.util.Arrays;
+import java.util.List;
 
 @SpringBootApplication
 @EnableDiscoveryClient
+@EnableFeignClients(
+        basePackages = "com.sportscape.api.clients.user"
+)
 public class FacilityServiceApplication implements CommandLineRunner {
 
     @Autowired
@@ -56,8 +62,8 @@ public class FacilityServiceApplication implements CommandLineRunner {
         facility1.setName("NYC Sports Center");
         facility1.setAddress("123 Main St, New York, NY");
         facility1.setAmenities("Gym, Pool");
-        facility1.setOpeningHour("06:00");
-        facility1.setClosingHour("22:00");
+        facility1.setOpeningHour(LocalTime.parse("06:00"));
+        facility1.setClosingHour(LocalTime.parse("22:00"));
         facility1.setReservationPrice(20.0);
         facility1.setOwnerId(1L);
 
@@ -65,8 +71,8 @@ public class FacilityServiceApplication implements CommandLineRunner {
         facility2.setName("LA Fitness Hub");
         facility2.setAddress("456 Grand Ave, Los Angeles, CA");
         facility2.setAmenities("Gym, Sauna");
-        facility2.setOpeningHour("05:00");
-        facility2.setClosingHour("23:00");
+        facility2.setOpeningHour(LocalTime.parse("05:00"));
+        facility2.setClosingHour(LocalTime.parse("23:00"));
         facility2.setReservationPrice(25.0);
         facility2.setOwnerId(2L);
 
@@ -74,8 +80,8 @@ public class FacilityServiceApplication implements CommandLineRunner {
         facility3.setName("Chicago Fitness Arena");
         facility3.setAddress("789 Lake Shore Dr, Chicago, IL");
         facility3.setAmenities("Gym, Pool, Track");
-        facility3.setOpeningHour("06:00");
-        facility3.setClosingHour("21:00");
+        facility3.setOpeningHour(LocalTime.parse("06:00"));
+        facility3.setClosingHour(LocalTime.parse("21:00"));
         facility3.setReservationPrice(15.0);
         facility3.setOwnerId(3L);
 
@@ -106,7 +112,7 @@ public class FacilityServiceApplication implements CommandLineRunner {
 
         // Add relations between locations and sports facilities
         facility1.setLocations(Arrays.asList(location1, location3));
-        facility2.setLocations(Arrays.asList(location2));
+        facility2.setLocations(List.of(location2));
         facility3.setLocations(Arrays.asList(location1, location3));
 
         sportsFacilityRepository.saveAll(Arrays.asList(facility1, facility2, facility3));

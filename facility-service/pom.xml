@@ -42,6 +42,11 @@
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
         </dependency>
+        <dependency>
+            <groupId>com.sportscape.api</groupId>
+            <artifactId>feign-clients</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
 
 
 

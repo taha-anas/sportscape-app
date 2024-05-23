@@ -1,14 +1,17 @@
 package com.sportscape.api.facilityservice.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
+import java.time.LocalTime;
 import java.util.List;
 
 @Entity
 @Setter
 @Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class SportsFacility {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,8 +20,8 @@ public class SportsFacility {
     private String name;
     private String address;
     private String amenities;
-    private String openingHour;
-    private String closingHour;
+    private LocalTime openingHour;
+    private LocalTime closingHour;
     private Double reservationPrice;
     private Long ownerId;
 
@@ -32,4 +35,6 @@ public class SportsFacility {
 
     @OneToMany(mappedBy = "sportsFacility")
     private List<SportType> sportTypes;
+
+
 }

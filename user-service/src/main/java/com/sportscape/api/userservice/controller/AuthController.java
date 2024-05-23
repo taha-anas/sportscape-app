@@ -3,13 +3,11 @@ package com.sportscape.api.userservice.controller;
 import com.sportscape.api.userservice.dto.AuthRequest;
 import com.sportscape.api.userservice.dto.AuthResponse;
 import com.sportscape.api.userservice.dto.RegisterRequest;
+import com.sportscape.api.userservice.model.User;
 import com.sportscape.api.userservice.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -30,4 +28,22 @@ public class AuthController {
     ){
         return ResponseEntity.ok(authService.authenticate(request));
     }
+
+
+
+    @GetMapping("/CurrentLoggedIn")
+    public ResponseEntity<User> getCurrentLoggedIn() {
+        User user = authService.getCurrentUser();
+
+        if (user != null) {
+
+            return ResponseEntity.ok(user);
+        } else {
+
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+
+
 }
