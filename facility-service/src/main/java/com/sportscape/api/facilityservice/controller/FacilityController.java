@@ -21,7 +21,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/facility/")
+@RequestMapping("/api/facility")
 public class FacilityController {
 
     @Autowired
@@ -36,11 +36,11 @@ public class FacilityController {
     @Autowired
     private UserClient userClient;
 
-    // Test endpoint
-    @GetMapping("/TestGateWay")
-    public ResponseEntity<String> testGateWay() {
-        return ResponseEntity.ok("Hi You received this from facility service! ");
-    }
+//    // Test endpoint
+//    @GetMapping("/TestGateWay")
+//    public ResponseEntity<String> testGateWay() {
+//        return ResponseEntity.ok("Hi You received this from facility service! ");
+//    }
 
     // Location Endpoints
     @GetMapping("/locations")
@@ -92,7 +92,7 @@ public class FacilityController {
     }
 
     @GetMapping("/sports-facilities/{id}")
-    public ResponseEntity<?> getSportsFacilityById(@PathVariable Long id) {
+    public ResponseEntity<?> getSportsFacilityById(@PathVariable("id") Long id) {
         try {
             Optional<SportsFacility> sportsFacilityOptional = sportsFacilityService.getSportsFacilityById(id);
             if (sportsFacilityOptional.isPresent()) {
@@ -109,42 +109,67 @@ public class FacilityController {
 
     @PostMapping("/sports-facilities")
     public ResponseEntity<?> createSportsFacility(@RequestBody SportsFacilityDto sportsFacilityDto) {
-        ResponseEntity<UserResponse> userResponseEntity = userClient.getCurrentUserInfo();
-
-        // if you successfully get userInfo
-        if (userResponseEntity.getStatusCode().is2xxSuccessful()) {
-            UserResponse userResponse = userResponseEntity.getBody();
-            if (userResponse != null && userResponse.getRole() == Role.OWNER) {
-                // if he is owner he can add facility
-                SportsFacility sportsFacility = SportsFacility.builder()
-                        .name(sportsFacilityDto.getName())
-                        .address(sportsFacilityDto.getAddress())
-                        .amenities(sportsFacilityDto.getAmenities())
-                        .openingHour(LocalTime.parse(sportsFacilityDto.getOpeningHour()))
-                        .closingHour(LocalTime.parse(sportsFacilityDto.getClosingHour()))
-                        .reservationPrice(sportsFacilityDto.getReservationPrice())
-                        .ownerId(userResponse.getId()) // from the current user which he is owner
-                        .build();
-
-
-                SportsFacility savedSportsFacility = sportsFacilityService.saveSportsFacility(sportsFacility);
-
-                // Return ResponseEntity with the saved sports facility object in the body
-                return ResponseEntity.ok(savedSportsFacility);
-            } else {
-                // User does not have the OWNER role ERROR!
-                return ResponseEntity.status(401).body("User does not have the required role to add a sports facility");
-            }
-        } else {
-            // Error occurred while fetching user info
-            return ResponseEntity.status(userResponseEntity.getStatusCodeValue()).build();
+        UserResponse userResponse;
+        try {
+             userResponse = userClient.getUser(sportsFacilityDto.getOwnerId());
         }
+        catch (Exception e) {
+            return new ResponseEntity<>("User not found.", HttpStatus.BAD_REQUEST);
+        }
+        // check if the user is owner
+        if (userResponse.getRole() != Role.OWNER) {
+            return new ResponseEntity<>("User is not owner.", HttpStatus.FORBIDDEN);
+        }
+
+        // if he is owner he can add facility
+        SportsFacility sportsFacility = SportsFacility.builder()
+                .name(sportsFacilityDto.getName())
+                .address(sportsFacilityDto.getAddress())
+                .amenities(sportsFacilityDto.getAmenities())
+                .openingHour(sportsFacilityDto.getOpeningHour())
+                .closingHour(sportsFacilityDto.getClosingHour())
+                .reservationPrice(sportsFacilityDto.getReservationPrice())
+                .locations(sportsFacilityDto.getLocations())
+                .sportType(sportsFacilityDto.getSportType())
+                .ownerId(userResponse.getId()) // from the current user which he is owner
+                .build();
+
+        SportsFacility savedSportsFacility = sportsFacilityService.saveSportsFacility(sportsFacility);
+
+        // Return ResponseEntity with the saved sports facility object in the body
+        return ResponseEntity.ok(savedSportsFacility);
+
     }
 
     @DeleteMapping("/sports-facilities/{id}")
-    public ResponseEntity<Void> deleteSportsFacility(@PathVariable Long id) {
+    public ResponseEntity<?> deleteSportsFacility(
+            @PathVariable("id") Long id,
+            @RequestBody SportsFacilityDto sportsFacilityDto
+    ) {
+        Optional<SportsFacility> sportsFacility = sportsFacilityService.getSportsFacilityById(id);
+        if (sportsFacility.isEmpty()) {
+            return new ResponseEntity<>("Facility not found", HttpStatus.NOT_FOUND);
+        }
+        //check if the user is the owner
+        if (!sportsFacilityDto.getOwnerId().equals(sportsFacility.get().getOwnerId())) {
+            return new ResponseEntity<>("Owner is not the same as the facility.", HttpStatus.BAD_REQUEST);
+        }
         sportsFacilityService.deleteSportsFacility(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/sports-facilities/{id}")
+    public ResponseEntity<?> updateSportsFacility(
+            @PathVariable("id") Long id,
+            @RequestBody SportsFacilityDto sportsFacilityDto) {
+        // check if sport facility exists
+        Optional<SportsFacility> sportsFacility = sportsFacilityService.getSportsFacilityById(id);
+        if (sportsFacility.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Sports Facility not found with ID: " + id);
+        }
+        SportsFacility facility = mapFromFacilityDtoToSportsFacility(sportsFacilityDto);
+        SportsFacility updatedSportsFacility = sportsFacilityService.updateSportsFacility(id,facility);
+        return new ResponseEntity<>(updatedSportsFacility, HttpStatus.OK);
     }
 
     // SportType Endpoints
@@ -182,6 +207,21 @@ public class FacilityController {
     public ResponseEntity<Void> deleteSportType(@PathVariable Long id) {
         sportTypeService.deleteSportType(id);
         return ResponseEntity.noContent().build();
+    }
+
+
+    private SportsFacility mapFromFacilityDtoToSportsFacility(SportsFacilityDto facilityDto) {
+        return SportsFacility.builder()
+                .name(facilityDto.getName())
+                .address(facilityDto.getAddress())
+                .amenities(facilityDto.getAmenities())
+                .openingHour(facilityDto.getOpeningHour())
+                .closingHour(facilityDto.getClosingHour())
+                .reservationPrice(facilityDto.getReservationPrice())
+                .locations(facilityDto.getLocations())
+                .sportType(facilityDto.getSportType())
+                .ownerId(facilityDto.getOwnerId())
+                .build();
     }
 
 

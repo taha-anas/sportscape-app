@@ -29,4 +29,12 @@ public class SportsFacilityService {
     public void deleteSportsFacility(Long id) {
         sportsFacilityRepository.deleteById(id);
     }
+
+    public SportsFacility updateSportsFacility(Long id, SportsFacility facility) {
+        if (!sportsFacilityRepository.existsById(id)){
+            throw new RuntimeException("SportsFacility not found");
+        }
+        facility.setId(id);
+        return sportsFacilityRepository.save(facility);
+    }
 }

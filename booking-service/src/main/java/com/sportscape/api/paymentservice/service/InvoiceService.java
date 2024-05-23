@@ -5,6 +5,8 @@ import com.sportscape.api.paymentservice.repository.InvoiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class InvoiceService {
     @Autowired
@@ -14,4 +16,8 @@ public class InvoiceService {
     public Invoice saveInvoice(Invoice invoice) {
         return invoiceRepository.save(invoice);
     }
+
+//    public List<Invoice> getUserInvoices(Long userId) {
+//        return invoiceRepository.findAllById()
+//    }
 }

@@ -15,6 +15,6 @@ public class SportType {
     private String name;
     private String description;
 
-    @ManyToOne
-    private SportsFacility sportsFacility;
+//    @ManyToOne
+//    private SportsFacility sportsFacility;
 }

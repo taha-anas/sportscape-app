@@ -1,18 +1,19 @@
-package com.sportscape.api.facilityservice.dto;
+package com.sportscape.api.clients.facility;
 
-import com.sportscape.api.facilityservice.model.Location;
-import com.sportscape.api.facilityservice.model.SportType;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalTime;
 import java.util.List;
-
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class SportsFacilityDto {
+public class SportFacilityResponse {
+    private Long id;
     private String name;
     private String address;
     private String amenities;
@@ -21,5 +22,5 @@ public class SportsFacilityDto {
     private Double reservationPrice;
     private Long ownerId;
     private List<Location> locations;
-    private SportType sportType;
+    private List<SportType> sportTypes;
 }

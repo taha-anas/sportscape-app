@@ -54,7 +54,7 @@ public class FacilityServiceApplication implements CommandLineRunner {
         location3.setCity("Chicago");
         location3.setPostalCode("60601");
         location3.setCoordinates("41.8781,-87.6298");
-
+        // save all locations
         locationRepository.saveAll(Arrays.asList(location1, location2, location3));
 
         // Insert fake data into SportsFacility table
@@ -85,28 +85,26 @@ public class FacilityServiceApplication implements CommandLineRunner {
         facility3.setReservationPrice(15.0);
         facility3.setOwnerId(3L);
 
-        sportsFacilityRepository.saveAll(Arrays.asList(facility1, facility2, facility3));
 
         // Insert fake data into SportType table
         SportType sportType1 = new SportType();
         sportType1.setName("Basketball");
         sportType1.setDescription("Indoor basketball court");
-        sportType1.setSportsFacility(facility1);
 
         SportType sportType2 = new SportType();
         sportType2.setName("Swimming");
         sportType2.setDescription("Olympic size swimming pool");
-        sportType2.setSportsFacility(facility1);
+
 
         SportType sportType3 = new SportType();
         sportType3.setName("Tennis");
         sportType3.setDescription("Outdoor tennis courts");
-        sportType3.setSportsFacility(facility2);
+
 
         SportType sportType4 = new SportType();
         sportType4.setName("Yoga");
         sportType4.setDescription("Yoga classes and studio");
-        sportType4.setSportsFacility(facility3);
+
 
         sportTypeRepository.saveAll(Arrays.asList(sportType1, sportType2, sportType3, sportType4));
 
@@ -114,6 +112,13 @@ public class FacilityServiceApplication implements CommandLineRunner {
         facility1.setLocations(Arrays.asList(location1, location3));
         facility2.setLocations(List.of(location2));
         facility3.setLocations(Arrays.asList(location1, location3));
+
+        // add facility type
+        facility1.setSportType(sportType1);
+        facility2.setSportType(sportType2);
+        facility3.setSportType(sportType3);
+
+//        sportsFacilityRepository.save(facility1);
 
         sportsFacilityRepository.saveAll(Arrays.asList(facility1, facility2, facility3));
     }

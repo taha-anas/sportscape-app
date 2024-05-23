@@ -33,8 +33,8 @@ public class SportsFacility {
     )
     private List<Location> locations;
 
-    @OneToMany(mappedBy = "sportsFacility")
-    private List<SportType> sportTypes;
+    @ManyToOne()
+    private SportType sportType;
 
 
 }

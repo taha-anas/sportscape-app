@@ -23,6 +23,5 @@ public class Location {
     @Column(name="Location_coordinates")
     private String coordinates;
 
-    @ManyToMany(mappedBy = "locations")
-    private List<SportsFacility> sportsFacilities;
+//    @ManyToMany(mappedBy = "locations")>
 }

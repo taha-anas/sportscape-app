@@ -1,5 +1,7 @@
 package com.sportscape.api.paymentservice.controller;
 
+import com.sportscape.api.clients.facility.FacilityClient;
+import com.sportscape.api.clients.facility.SportFacilityResponse;
 import com.sportscape.api.clients.user.UserClient;
 import com.sportscape.api.clients.user.UserResponse;
 import com.sportscape.api.paymentservice.dto.BookingRequestDto;
@@ -9,6 +11,7 @@ import com.sportscape.api.paymentservice.model.Invoice;
 import com.sportscape.api.paymentservice.model.Status;
 import com.sportscape.api.paymentservice.service.BookingService;
 import com.sportscape.api.paymentservice.service.InvoiceService;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,13 +27,13 @@ import java.util.UUID;
 @RestController
 @RequestMapping("api/booking")
 @Slf4j
+@AllArgsConstructor
 public class BookingController {
-    @Autowired
     private BookingService bookingService;
-    @Autowired
     private InvoiceService invoiceService;
-    @Autowired
     private UserClient userClient;
+    private FacilityClient facilityClient;
+
 
     @GetMapping
     public ResponseEntity<?> getAllUserBooking(@RequestBody BookingRequestDto bookingDto) {
@@ -40,10 +43,13 @@ public class BookingController {
         }
         // to-do check if user id refer to user
         // send request to user service
-        UserResponse user = userClient.getUser(bookingDto.getUserId());
-        if (user == null) {
-            return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+        try {
+            userClient.getUser(bookingDto.getUserId());
         }
+        catch (Exception e) {
+            return new ResponseEntity<>("User not found.", HttpStatus.BAD_REQUEST);
+        }
+//        log.info("user data {}", user);
         // if okay return all booking
         List<Booking> bookings = bookingService.getBookingsByUserId(bookingDto.getUserId());
         return new ResponseEntity<>(
@@ -53,7 +59,7 @@ public class BookingController {
     }
 
     @GetMapping("/{id}")
-    ResponseEntity<BookingResponseDto> getBookingById(@PathVariable Long id) {
+    ResponseEntity<BookingResponseDto> getBookingById(@PathVariable("id") Long id) {
         Optional<Booking> booking = bookingService.getBookingById(id);
         return booking
                 .map(value -> new ResponseEntity<>(mapBookingToBookingDto(value), HttpStatus.OK))
@@ -61,7 +67,7 @@ public class BookingController {
     }
 
     @PostMapping
-    public ResponseEntity<BookingResponseDto> createBooking(@RequestBody BookingRequestDto bookingDto) {
+    public ResponseEntity<?> createBooking(@RequestBody BookingRequestDto bookingDto) {
         if (bookingDto.getUserId() == null ||
                 bookingDto.getFacilityId() ==null ||
                 bookingDto.getStartTime() ==null ||
@@ -72,27 +78,50 @@ public class BookingController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         // check if the userId exist
-
+        UserResponse user;
+        try {
+            userClient.getUser(bookingDto.getUserId());
+        }
+        catch (Exception e) {
+            return new ResponseEntity<>("User not found.", HttpStatus.BAD_REQUEST);
+        }
         // check if facilityId exist
-
+        try {
+            facilityClient.getSportsFacilityById(bookingDto.getFacilityId());
+        }
+        catch (Exception e) {
+            return new ResponseEntity<>("Facility not found.", HttpStatus.BAD_REQUEST);
+        }
         // create Booking object
         Booking bookingData = mapBookingRequestToBooking(bookingDto);
         bookingData.setStatus(Status.PENDING);
         Booking savedBooking = bookingService.saveBooking(bookingData);
-
         // pass Payment
 
-        // create Invoice
+        // create change payment status and generate invoice
+        savedBooking.setStatus(Status.PAID);
+        bookingService.updateBooking(savedBooking.getId(),savedBooking);
         Invoice invoice = Invoice.builder()
                 .invoiceNumber(UUID.randomUUID().toString())
                 .issueDate(LocalDateTime.now())
                 .totalAmount(bookingData.getTotalAmount())
                 .booking(savedBooking)
                 .build();
-        Invoice savedInvoice = invoiceService.saveInvoice(invoice);
-
+        invoiceService.saveInvoice(invoice);
         return new ResponseEntity<>(mapBookingToBookingDto(savedBooking), HttpStatus.CREATED);
     }
+
+//    @GetMapping("/invoices")
+//    public ResponseEntity<?> getInvoices(@RequestParam("user-id") Long userId ) {
+//        try {
+//            userClient.getUser(userId);
+//        }
+//        catch (Exception e) {
+//            return new ResponseEntity<>("User not found.", HttpStatus.BAD_REQUEST);
+//        }
+////        List<Invoice> invoices = invoiceService.getUserInvoices(userId);
+//        return new ResponseEntity<>()
+//    }
 
     private Booking mapBookingRequestToBooking(BookingRequestDto bookingDto) {
         return Booking.builder()

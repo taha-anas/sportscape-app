@@ -28,4 +28,12 @@ public class BookingService {
     public Booking saveBooking(Booking bookingData) {
         return bookingRepository.save(bookingData);
     }
+
+    public Booking updateBooking(Long id,Booking savedBooking) {
+        Optional<Booking> oldBooking = bookingRepository.findById(id);
+        if(oldBooking.isEmpty()) {
+            throw new RuntimeException("Booking not found");
+        }
+        return bookingRepository.save(savedBooking);
+    }
 }
