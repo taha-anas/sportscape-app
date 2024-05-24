@@ -1,4 +1,4 @@
-package com.sportscape.api.paymentservice.model;
+package com.sportscape.api.bookingservice.model;
 
 public enum PaymentMethod {
     CASH,

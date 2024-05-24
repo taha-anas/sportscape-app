@@ -1,8 +1,6 @@
-package com.sportscape.api.paymentservice.controller;
+package com.sportscape.api.bookingservice.controller;
 
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class BookingControllerTest {
 

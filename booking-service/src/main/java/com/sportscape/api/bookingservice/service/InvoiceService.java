@@ -1,11 +1,9 @@
-package com.sportscape.api.paymentservice.service;
+package com.sportscape.api.bookingservice.service;
 
-import com.sportscape.api.paymentservice.model.Invoice;
-import com.sportscape.api.paymentservice.repository.InvoiceRepository;
+import com.sportscape.api.bookingservice.model.Invoice;
+import com.sportscape.api.bookingservice.repository.InvoiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class InvoiceService {

@@ -1,7 +1,7 @@
-package com.sportscape.api.paymentservice.service;
+package com.sportscape.api.bookingservice.service;
 
-import com.sportscape.api.paymentservice.model.Booking;
-import com.sportscape.api.paymentservice.repository.BookingRepository;
+import com.sportscape.api.bookingservice.model.Booking;
+import com.sportscape.api.bookingservice.repository.BookingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

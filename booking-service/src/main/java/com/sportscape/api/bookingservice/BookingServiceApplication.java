@@ -1,4 +1,4 @@
-package com.sportscape.api.paymentservice;
+package com.sportscape.api.bookingservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

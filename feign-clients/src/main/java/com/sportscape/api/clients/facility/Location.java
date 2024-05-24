@@ -1,7 +1,6 @@
 package com.sportscape.api.clients.facility;
 
 
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

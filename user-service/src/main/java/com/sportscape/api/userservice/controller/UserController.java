@@ -1,5 +1,6 @@
 package com.sportscape.api.userservice.controller;
 
+import com.sportscape.api.userservice.dto.RegisterRequest;
 import com.sportscape.api.userservice.dto.UserRequest;
 import com.sportscape.api.userservice.dto.UserResponse;
 import com.sportscape.api.userservice.model.User;
@@ -35,15 +36,22 @@ public class UserController {
     
 
     @PostMapping
-    public ResponseEntity<UserResponse> createUser(@RequestBody UserRequest userRequest) {
-        User userData = mapFromUserRequest(userRequest);
+    public ResponseEntity<UserResponse> createUser(@RequestBody RegisterRequest registerRequest) {
+        User userData = User.builder()
+                .firstname(registerRequest.getFirstname())
+                .lastname(registerRequest.getLastname())
+                .email(registerRequest.getEmail())
+                .password(registerRequest.getPassword())
+                .phone(registerRequest.getPhone())
+                .address(registerRequest.getAddress())
+                .build();
         User newUser = userService.saveUser(userData);
         return new ResponseEntity<>(mapToUserResponse(newUser), HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<UserResponse> getUser(@PathVariable("id") long id) {
-        System.out.println("pass");
+//        System.out.println("pass");
         Optional<User> user = userService.getUserById(id);
         return user
                 .map(value -> new ResponseEntity<>(mapToUserResponse(value), HttpStatus.OK))

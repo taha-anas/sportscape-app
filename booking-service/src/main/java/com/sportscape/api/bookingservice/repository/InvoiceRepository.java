@@ -1,6 +1,6 @@
-package com.sportscape.api.paymentservice.repository;
+package com.sportscape.api.bookingservice.repository;
 
-import com.sportscape.api.paymentservice.model.Invoice;
+import com.sportscape.api.bookingservice.model.Invoice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

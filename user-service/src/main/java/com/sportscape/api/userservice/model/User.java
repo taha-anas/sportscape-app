@@ -30,9 +30,7 @@ public class User {
     private String phone;
     @Enumerated(EnumType.STRING)
     private Role role;
-    @Column(nullable = false)
     private String email;
-    @Column(nullable = false)
     private String password;
 
 //    @Override
