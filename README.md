@@ -1,40 +1,55 @@
 SportScape
 
-SportScape is a modern platform for sports facility management and online booking. It helps users easily discover, book, and manage sports venues while giving facility owners the tools to organize reservations efficiently.
+SportScape is a modern platform for sports facility management and online booking. It enables users to discover, book, and manage sports venues while giving facility owners tools to streamline reservations.
 
 ✨ Key Features
 
-Facility Discovery – Browse sports venues by location, type, and availability
+Facility Discovery – Search and filter sports venues by location, type, and availability
 
-Smart Booking – Real-time reservation system with availability tracking
+Smart Booking – Real-time reservation system with conflict prevention
 
-User Accounts – Secure registration, login, and profile management
+User Accounts – Secure authentication, registration, and profile management
 
-Facility Management – Tools for venue owners to manage schedules and bookings
+Facility Management – Venue owners can manage schedules and availability
 
-Scalable & Reliable – Built with a modular architecture for growth
+Scalable & Reliable – Built with independent microservices for resilience and growth
+
+🏗️ Microservices Architecture
+
+SportScape follows a domain-driven microservices design:
+
+User Service – Authentication, profiles, and identity management
+
+Facility Service – Facility catalog, locations, and metadata
+
+Booking Service – Reservation logic, availability, and payment integration (future)
+
+API Gateway – Central entry point, request routing, and load balancing
+
+Service Discovery – Eureka registry for automatic service registration and discovery
+
 
 🚀 Quick Start
 
-You can run the full platform with Docker:
+Run the entire platform using Docker:
 
 docker-compose up -d
 
 
-Frontend will be available on http://localhost:4200
+Frontend: http://localhost:4200
 
-API Gateway on http://localhost:8083
+API Gateway: http://localhost:8083
 
 🛠️ Tech Stack
 
-Backend: Spring Boot microservices
+Backend: Spring Boot, Spring Cloud (Eureka, Gateway, Feign)
 
-Frontend: Angular
+Frontend: Angular, TypeScript
 
 Database: PostgreSQL
 
-Infrastructure: Docker, Spring Cloud
+Infrastructure: Docker, Docker Compose
 
 📌 About the Project
 
-SportScape was built as a full-stack microservices project to explore scalable architectures for real-world booking systems. It demonstrates service communication, containerized deployment, and a modern web user experience.
+SportScape was built to demonstrate real-world microservices patterns such as service discovery, API gateway routing, and containerized deployment. It highlights how modern booking platforms can achieve scalability, modularity, and fault isolation using a microservices approach.
