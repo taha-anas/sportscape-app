@@ -1,0 +1,27 @@
+.login-container {
+  background-color: white;
+}
+
+.card {
+  background-color: #e8f5e9; /* Light green background for card */
+}
+
+.btn-success {
+  background-color: #4CAF50; /* Light green button */
+  border: none;
+}
+
+.btn-success:hover {
+  background-color: #45a049; /* Darker green on hover */
+}
+
+.alert-success {
+  color: #155724;
+  background-color: #d4edda;
+  border-color: #c3e6cb;
+}
+#forgotPassLink{
+  text-decoration: none;
+  color: #45a049;
+
+}

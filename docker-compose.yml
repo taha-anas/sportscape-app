@@ -1,0 +1,101 @@
+services:
+  postgres:
+    container_name: sportscape-postgres
+    image: postgres
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      PGDATA: /data/postgres
+    volumes:
+      - postgres:/data/postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - sportscape-postgres
+    restart: unless-stopped
+  pgadmin:
+    container_name: sportscape-pgadmin
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "admin@email.com"
+      PGADMIN_DEFAULT_PASSWORD: "admin"
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+    ports:
+      - "5050:80"
+    networks:
+      - sportscape-postgres
+    restart: unless-stopped
+
+  eureka-server:
+    image: eureka-server
+    container_name: sportscape-eureka-server
+    ports:
+      - "8761:8761"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    networks:
+      - sportscape-spring
+
+  apigw:
+    image: apigw
+    container_name: sportscape-apigw
+    ports:
+      - "8083:8083"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    depends_on:
+      - eureka-server
+    networks:
+      - sportscape-spring
+
+  user-service:
+    image: user-service
+    container_name: sportscape-user-service
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    ports:
+      - "8080:8080"
+    depends_on:
+      - eureka-server
+      - postgres
+    networks:
+      - sportscape-spring
+      - sportscape-postgres
+  booking-service:
+    image: booking-service
+    container_name: sportscape-booking-service
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    ports:
+      - "8087:8087"
+    depends_on:
+      - eureka-server
+      - postgres
+    networks:
+      - sportscape-spring
+      - sportscape-postgres
+  facility-service:
+    image: facility-service
+    container_name: sportscape-facility-service
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+    ports:
+      - "8085:8085"
+    depends_on:
+      - eureka-server
+      - postgres
+    networks:
+      - sportscape-spring
+      - sportscape-postgres
+
+networks:
+  sportscape-postgres:
+    driver: bridge
+  sportscape-spring:
+    driver: bridge
+
+volumes:
+  postgres:
+  pgadmin:
